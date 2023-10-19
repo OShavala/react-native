@@ -10,36 +10,43 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  useWindowDimensions,
 } from 'react-native';
 import backgroundImage from '../../assets/images/background.png';
 
+const initialState = {
+  email: '',
+  password: '',
+};
 export const LoginScreen = () => {
+  const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [isHidePassword, setIsHidePassword] = useState(true);
-
+  const { height, width } = useWindowDimensions();
   const handleInputFocus = (input) => {
     setFocusedInput(input);
   };
   const handleInputBlur = () => {
     setFocusedInput(null);
   };
-
   const handleHidePassword = () => {
     setIsHidePassword(!isHidePassword);
   };
+  const handleSubmit = () => {
+    console.log(state);
+    setState(initialState);
+  };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? -230 : -235}
-      >
-        <ImageBackground
-          style={styles.imageBackground}
-          source={backgroundImage}
-          resizeMode="cover"
+     <ImageBackground
+      source={backgroundImage}
+      style={{ position: 'absolute', width: width, height: height }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? -230 : -235}
         >
           <View style={styles.formContainer}>
             <Text style={styles.formTitle}>Увійти</Text>
@@ -47,15 +54,23 @@ export const LoginScreen = () => {
               <TextInput
                 style={[
                   styles.formInput,
+                  
                   focusedInput === 'email' && styles.focusedFormInput,
                 ]}
+               
                 placeholder="Адреса електронної пошти"
                 textContentType="emailAddress"
                 keyboardType="email-address"
+                value={state.email}
+                onChangeText={(value) =>
+                  
+                  setState((prev) => ({ ...prev, email: value }))
+                }
+             
                 onFocus={() => handleInputFocus('email')}
                 onBlur={handleInputBlur}
               />
-
+              
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={[
@@ -65,6 +80,10 @@ export const LoginScreen = () => {
                   placeholder="Пароль"
                   textContentType="password"
                   secureTextEntry={isHidePassword}
+                  value={state.password}
+                  onChangeText={(value) =>
+                    setState((prev) => ({ ...prev, password: value }))
+                  }
                   onFocus={() => handleInputFocus('password')}
                   onBlur={handleInputBlur}
                 />
@@ -78,29 +97,26 @@ export const LoginScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonTitle}>Увійти</Text>
             </TouchableOpacity>
-             <TouchableOpacity>
+            <TouchableOpacity>
               <Text style={styles.textLogin}>
                 Немає акаунту?{' '}
                 <Text style={styles.registrationText}>Зареєструватися</Text>
               </Text>
             </TouchableOpacity>
           </View>
-        </ImageBackground>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </ImageBackground>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
 
-  imageBackground: {
-    flex: 1,
-    resizeMode: 'cover',
+const styles = StyleSheet.create({
+  
+  container: {
+    flex: 1,    
     justifyContent: 'flex-end',
   },
 
@@ -116,6 +132,7 @@ const styles = StyleSheet.create({
   formTitle: {
     marginBottom: 32,
     fontSize: 30,
+    fontFamily: 'Roboto-Medium',
     lineHeight: 35,
     textAlign: 'center',
   },
@@ -130,6 +147,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 8,
     fontSize: 16,
+    fontFamily: 'Roboto-Regular',
     lineHeight: 19,
     backgroundColor: '#F6F6F6',
   },
@@ -168,6 +186,7 @@ const styles = StyleSheet.create({
   buttonTitle: {
     textAlign: 'center',
     fontSize: 16,
+    fontFamily: 'Roboto-Regular',
     lineHeight: 19,
     color: '#FFFFFF',
   },
@@ -175,6 +194,7 @@ const styles = StyleSheet.create({
   textLogin: {
     textAlign: 'center',
     fontSize: 16,
+    fontFamily: 'Roboto-Regular',
     lineHeight: 19,
     color: '#1B4371',
   },
