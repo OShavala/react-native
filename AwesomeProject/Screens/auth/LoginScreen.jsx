@@ -12,17 +12,20 @@ import {
   Keyboard,
   useWindowDimensions,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import backgroundImage from '../../assets/images/background.png';
-
 const initialState = {
   email: '',
   password: '',
 };
-export const LoginScreen = () => {
+
+
+export const LoginScreen = ({ setIsLogin }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [isHidePassword, setIsHidePassword] = useState(true);
   const { height, width } = useWindowDimensions();
+  const navigation = useNavigation();
   const handleInputFocus = (input) => {
     setFocusedInput(input);
   };
@@ -35,10 +38,11 @@ export const LoginScreen = () => {
   const handleSubmit = () => {
     console.log(state);
     setState(initialState);
+    setIsLogin(true);
   };
 
   return (
-     <ImageBackground
+    <ImageBackground
       source={backgroundImage}
       style={{ position: 'absolute', width: width, height: height }}
     >
@@ -54,23 +58,18 @@ export const LoginScreen = () => {
               <TextInput
                 style={[
                   styles.formInput,
-                  
                   focusedInput === 'email' && styles.focusedFormInput,
                 ]}
-               
                 placeholder="Адреса електронної пошти"
                 textContentType="emailAddress"
                 keyboardType="email-address"
                 value={state.email}
                 onChangeText={(value) =>
-                  
                   setState((prev) => ({ ...prev, email: value }))
                 }
-             
                 onFocus={() => handleInputFocus('email')}
                 onBlur={handleInputBlur}
               />
-              
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={[
@@ -100,26 +99,26 @@ export const LoginScreen = () => {
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonTitle}>Увійти</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('RegistrationScreen')}
+            >
               <Text style={styles.textLogin}>
                 Немає акаунту?{' '}
                 <Text style={styles.registrationText}>Зареєструватися</Text>
               </Text>
             </TouchableOpacity>
           </View>
-          </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  
   container: {
-    flex: 1,    
+    flex: 1,
     justifyContent: 'flex-end',
   },
-
   formContainer: {
     paddingTop: 32,
     paddingBottom: 144,
@@ -128,7 +127,6 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 25,
     backgroundColor: '#FFFFFF',
   },
-
   formTitle: {
     marginBottom: 32,
     fontSize: 30,
@@ -136,12 +134,10 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     textAlign: 'center',
   },
-
   inputThumb: {
     marginBottom: 32,
     gap: 16,
   },
-
   formInput: {
     padding: 15,
     height: 50,
@@ -151,7 +147,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     backgroundColor: '#F6F6F6',
   },
-
   focusedFormInput: {
     borderWidth: 1,
     borderStyle: 'solid',
@@ -159,22 +154,18 @@ const styles = StyleSheet.create({
     borderColor: '#FF6C00',
     backgroundColor: '#FFFFFF',
   },
-
   passwordContainer: {
     position: 'relative',
   },
-
   passwordButton: {
     position: 'absolute',
     top: 15,
     right: 12,
   },
-
   passwordButtonText: {
     fontSize: 16,
     color: '#1B4371',
   },
-
   button: {
     paddingVertical: 16,
     paddingHorizontal: 32,
@@ -182,7 +173,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: '#FF6C00',
   },
-
   buttonTitle: {
     textAlign: 'center',
     fontSize: 16,
@@ -190,7 +180,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: '#FFFFFF',
   },
-
   textLogin: {
     textAlign: 'center',
     fontSize: 16,
@@ -198,10 +187,10 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: '#1B4371',
   },
-
   registrationText: {
     textDecorationLine: 'underline',
   },
 });
+
 
 
