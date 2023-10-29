@@ -1,13 +1,9 @@
 import { View, Text } from 'react-native';
 
-export const PostsScreen = ({}) => {
+export const MapScreen = ({}) => {
   return (
     <View>
-      <Text>PostsScreen</Text>
+      <Text>MapScreen</Text>
     </View>
   );
 };
-
-
-
-

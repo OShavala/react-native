@@ -12,23 +12,24 @@ import {
   Keyboard,
   useWindowDimensions,
 } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 import backgroundImage from '../../assets/images/background.png';
 import * as ImagePicker from 'expo-image-picker';
 import { ImageUser } from '../../components/ImageUser/ImageUser';
-
 const initialState = {
   login: '',
   email: '',
   password: '',
 };
-export const RegistrationScreen = () => {
+
+
+export const RegistrationScreen = ({ setIsLogin }) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [isHidePassword, setIsHidePassword] = useState(true);
   const { height, width } = useWindowDimensions();
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const navigation = useNavigation();
   const handleInputFocus = (input) => {
     setFocusedInput(input);
   };
@@ -41,23 +42,20 @@ export const RegistrationScreen = () => {
   const handleSubmit = () => {
     console.log(state);
     setState(initialState);
+    setIsLogin(true);
   };
 
- 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 1,
     });
-
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
     } else {
       alert('You did not select any image.');
     }
   };
-
-           
   return (
     <ImageBackground
       source={backgroundImage}
@@ -90,29 +88,21 @@ export const RegistrationScreen = () => {
                 onFocus={() => handleInputFocus('login')}
                 onBlur={handleInputBlur}
               />
-
-            
               <TextInput
                 style={[
                   styles.formInput,
-                  
                   focusedInput === 'email' && styles.focusedFormInput,
                 ]}
-               
                 placeholder="Адреса електронної пошти"
                 textContentType="emailAddress"
                 keyboardType="email-address"
                 value={state.email}
                 onChangeText={(value) =>
-                 
                   setState((prev) => ({ ...prev, email: value }))
                 }
-                
                 onFocus={() => handleInputFocus('email')}
                 onBlur={handleInputBlur}
               />
-              
-
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={[
@@ -142,16 +132,17 @@ export const RegistrationScreen = () => {
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonTitle}>Зареєстуватися</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('LoginScreen')}
+            >
               <Text style={styles.textLogin}>Вже є акаунт? Увійти</Text>
             </TouchableOpacity>
           </View>
-          </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </ImageBackground>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -165,8 +156,7 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 25,
     backgroundColor: '#FFFFFF',
   },
-
-   formTitle: {
+  formTitle: {
     marginBottom: 32,
     fontSize: 30,
     fontFamily: 'Roboto-Medium',
