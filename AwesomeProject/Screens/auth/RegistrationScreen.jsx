@@ -12,37 +12,53 @@ import {
   Keyboard,
   useWindowDimensions,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import backgroundImage from '../../assets/images/background.png';
 import * as ImagePicker from 'expo-image-picker';
 import { ImageUser } from '../../components/ImageUser/ImageUser';
+
+import {
+  authSignUpUser,
+  uploadAvatarToServer,
+} from '../../redux/auth/authOperations';
+
 const initialState = {
-  login: '',
-  email: '',
-  password: '',
+  photoURL: null,
+  login: null,
+  email: null,
+  password: null,
 };
 
-
-export const RegistrationScreen = ({ setIsLogin }) => {
+export const RegistrationScreen = ({}) => {
   const [state, setState] = useState(initialState);
   const [focusedInput, setFocusedInput] = useState(null);
   const [isHidePassword, setIsHidePassword] = useState(true);
   const { height, width } = useWindowDimensions();
-  const [selectedImage, setSelectedImage] = useState(null);
+
+  const dispatch = useDispatch();
+
   const navigation = useNavigation();
+
   const handleInputFocus = (input) => {
     setFocusedInput(input);
   };
+
   const handleInputBlur = () => {
     setFocusedInput(null);
   };
+
   const handleHidePassword = () => {
     setIsHidePassword(!isHidePassword);
   };
+
   const handleSubmit = () => {
-    console.log(state);
-    setState(initialState);
-    setIsLogin(true);
+    const { login, email, password } = state;
+
+    if (login && email && password) {
+      dispatch(authSignUpUser(state));
+      setState(initialState);
+    }
   };
 
   const pickImageAsync = async () => {
@@ -50,12 +66,16 @@ export const RegistrationScreen = ({ setIsLogin }) => {
       allowsEditing: true,
       quality: 1,
     });
+
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      const photoURL = await uploadAvatarToServer(result.assets[0].uri);
+
+      setState((prev) => ({ ...prev, photoURL }));
     } else {
       alert('You did not select any image.');
     }
   };
+
   return (
     <ImageBackground
       source={backgroundImage}
@@ -69,9 +89,9 @@ export const RegistrationScreen = ({ setIsLogin }) => {
         >
           <View style={styles.formContainer}>
             <ImageUser
-              selectedImage={selectedImage}
+              state={state}
               onPress={pickImageAsync}
-              onDelete={setSelectedImage}
+              onDelete={setState}
             />
             <Text style={styles.formTitle}>Реєстрація</Text>
             <View style={styles.inputThumb}>
@@ -88,6 +108,7 @@ export const RegistrationScreen = ({ setIsLogin }) => {
                 onFocus={() => handleInputFocus('login')}
                 onBlur={handleInputBlur}
               />
+
               <TextInput
                 style={[
                   styles.formInput,
@@ -103,6 +124,7 @@ export const RegistrationScreen = ({ setIsLogin }) => {
                 onFocus={() => handleInputFocus('email')}
                 onBlur={handleInputBlur}
               />
+
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={[
@@ -143,11 +165,13 @@ export const RegistrationScreen = ({ setIsLogin }) => {
     </ImageBackground>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-end',
   },
+
   formContainer: {
     paddingTop: 92,
     paddingBottom: 78,
@@ -156,6 +180,7 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 25,
     backgroundColor: '#FFFFFF',
   },
+
   formTitle: {
     marginBottom: 32,
     fontSize: 30,
@@ -163,10 +188,12 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     textAlign: 'center',
   },
+
   inputThumb: {
     marginBottom: 32,
     gap: 16,
   },
+
   formInput: {
     padding: 16,
     height: 50,
@@ -176,6 +203,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto-Regular',
     backgroundColor: '#F6F6F6',
   },
+
   focusedFormInput: {
     borderWidth: 1,
     borderStyle: 'solid',
@@ -183,19 +211,23 @@ const styles = StyleSheet.create({
     borderColor: '#FF6C00',
     backgroundColor: '#FFFFFF',
   },
+
   passwordContainer: {
     position: 'relative',
   },
+
   passwordButton: {
     position: 'absolute',
     top: 15,
     right: 12,
   },
+
   passwordButtonText: {
     fontSize: 16,
     fontFamily: 'Roboto-Regular',
     color: '#1B4371',
   },
+
   button: {
     paddingVertical: 16,
     paddingHorizontal: 32,
@@ -203,6 +235,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: '#FF6C00',
   },
+
   buttonTitle: {
     textAlign: 'center',
     fontSize: 16,
@@ -210,6 +243,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto-Regular',
     color: '#FFFFFF',
   },
+
   textLogin: {
     textAlign: 'center',
     fontSize: 16,
@@ -218,5 +252,7 @@ const styles = StyleSheet.create({
     color: '#1B4371',
   },
 });
+
+
 
 
