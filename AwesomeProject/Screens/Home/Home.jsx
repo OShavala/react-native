@@ -1,23 +1,24 @@
 import { useState } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
 import { PostsScreen, CreatePostsScreen, ProfileScreen } from '../mainScreen';
 import { Feather } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
-export const Home = ({ navigation, setIsLogin }) => {
+export const Home = ({ navigation }) => {
   const [tabBarStyle, setTabBarStyle] = useState('flex');
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerTitleAlign: 'center',
+
         headerStyle: {
           borderBottomWidth: 1,
           borderColor: '#E5E5E5',
         },
+
         tabBarShowLabel: false,
         tabBarActiveBackgroundColor: '#FF6C00',
         tabBarActiveTintColor: '#ffffff',
@@ -32,6 +33,7 @@ export const Home = ({ navigation, setIsLogin }) => {
           borderTopWidth: 1,
           borderColor: '#E5E5E5',
         },
+
         tabBarItemStyle: {
           borderRadius: 20,
         },
@@ -39,20 +41,16 @@ export const Home = ({ navigation, setIsLogin }) => {
     >
       <Tab.Screen
         name="PostsScreen"
-       
         options={{
-         
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <Feather name="grid" size={24} color={color} />
           ),
         }}
-    
       >
         {({ navigation }) => (
           <PostsScreen
             navigation={navigation}
-            setIsLogin={setIsLogin}
             setTabBarStyle={setTabBarStyle}
           />
         )}
@@ -72,6 +70,7 @@ export const Home = ({ navigation, setIsLogin }) => {
               Створити публікацію
             </Text>
           ),
+
           headerLeft: () => (
             <TouchableOpacity
               style={{ marginLeft: 16, marginBottom: 10 }}
@@ -91,6 +90,7 @@ export const Home = ({ navigation, setIsLogin }) => {
         component={ProfileScreen}
         options={{
           headerShown: false,
+
           tabBarIcon: ({ color }) => (
             <Feather name="user" size={24} color={color} />
           ),
@@ -99,6 +99,10 @@ export const Home = ({ navigation, setIsLogin }) => {
     </Tab.Navigator>
   );
 };
+
+
+
+
 
 
 
